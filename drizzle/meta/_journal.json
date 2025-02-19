@@ -8,6 +8,13 @@
       "when": 1739240949003,
       "tag": "0000_red_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1739922718370,
+      "tag": "0001_careful_patriot",
+      "breakpoints": true
     }
   ]
 }

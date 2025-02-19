@@ -5,3 +5,14 @@ https://www.better-auth.com/docs/concepts/database#secondary-storage
 
 - for data fetching, create hydration boundaries (second code block is app router)
 https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#prefetching-and-dehydrating-data
+
+
+### Profile
+
+- username
+- first name
+- last name
+- location
+- profile pic
+- bio
+- links

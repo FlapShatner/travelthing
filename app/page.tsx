@@ -1,4 +1,4 @@
-
+import AuthButton from "./components/auth-button";
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-screen w-full">
@@ -6,6 +6,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold">
           Sup
         </h1>
+        <AuthButton />
       </main>
     </div>
   );
