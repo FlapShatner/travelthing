@@ -1,5 +1,6 @@
-function Page() {
-    return <div>Profile Page</div>
+
+function Page({ params }: { params: { pid: string } }) {
+    return <div>Profile Page of {params.pid} </div>
 }
 
 export default Page
