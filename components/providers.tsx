@@ -2,9 +2,9 @@
 
 import { QueryClient, QueryClientProvider, isServer } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "next-themes"
 import React from "react";
 
-// const queryClient = new QueryClient();
 function makeQueryClient() {
     return new QueryClient({
         defaultOptions: {
@@ -39,8 +39,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     //       render if it suspends and there is no boundary
     const queryClient = getQueryClient()
     return (
-        <QueryClientProvider client={queryClient}>{children}
-            <ReactQueryDevtools initialIsOpen={false} />
+        <QueryClientProvider client={queryClient}>
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+            >{children}
+                <ReactQueryDevtools initialIsOpen={false} />
+            </ThemeProvider>
         </QueryClientProvider>
     );
 }

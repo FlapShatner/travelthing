@@ -1,5 +1,7 @@
 'use client'
 import { authClient } from "@/lib/auth-client";
+import { Button } from "../ui/button";
+import { LogIn, LogOut, LoaderPinwheel } from "lucide-react";
 
 export default function AuthButton() {
     const { data: session, isPending } = authClient.useSession()
@@ -17,5 +19,5 @@ export default function AuthButton() {
         }
     }
 
-    return <div className='cursor-pointer' onClick={onClick}>{session ? "Sign Out" : isPending ? "Loading..." : "Sign In"}</div>;
+    return <Button variant="outline" size="icon" onClick={onClick}>{session ? <LogOut /> : isPending ? <LoaderPinwheel className="animate-spin" /> : <LogIn />}</Button>;
 }

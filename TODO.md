@@ -9,10 +9,11 @@ https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#prefe
 
 ### Profile
 
-- username
+- username - unique
 - first name
 - last name
 - location
-- profile pic
+- profile pic - profile image editor
+- header image
 - bio
-- links
+- links - with icons
