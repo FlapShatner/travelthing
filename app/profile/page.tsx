@@ -12,11 +12,13 @@ function Page() {
         console.log("No user")
         // redirect("/")
     }
-    return <div>
-        <h1>{user?.name}</h1>
-        <p>{user?.email}</p>
-        {user?.image && <Image src={user?.image} alt={user?.name} width={100} height={100} />}
-    </div>
+    return (
+        <div>
+            <h1>{user?.name}</h1>
+            <p>{user?.email}</p>
+            {user?.image && <Image src={user?.image} alt={user?.name} width={100} height={100} />}
+        </div>
+    )
 }
 
 export default Page 
