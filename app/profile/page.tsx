@@ -1,6 +1,7 @@
 'use client'
 import { authClient } from "@/lib/auth-client";
-import Image from "next/image";
+// import Image from "next/image";
+import EditProfile from "@/components/edit-profile";
 function Page() {
     const { data } = authClient.useSession()
     if (!data) {
@@ -14,9 +15,7 @@ function Page() {
     }
     return (
         <div>
-            <h1>{user?.name}</h1>
-            <p>{user?.email}</p>
-            {user?.image && <Image src={user?.image} alt={user?.name} width={100} height={100} />}
+            <EditProfile />
         </div>
     )
 }
