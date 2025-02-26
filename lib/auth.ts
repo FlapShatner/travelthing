@@ -21,4 +21,13 @@ export const auth = betterAuth({
     usePlural: true,
   }),
   plugins: [nextCookies()],
+  user: {
+    additionalFields: {
+      hasProfile: {
+        type: 'boolean',
+        required: true,
+        defaultValue: false,
+      },
+    },
+  },
 });

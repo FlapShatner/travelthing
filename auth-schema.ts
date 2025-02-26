@@ -1,5 +1,4 @@
 import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -9,7 +8,7 @@ export const users = pgTable('users', {
   image: text('image'),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
-  hasProfile: boolean('has_profile').notNull().default(false),
+  hasProfile: boolean('has_profile').notNull(),
 });
 
 export const sessions = pgTable('sessions', {
@@ -51,42 +50,3 @@ export const verifications = pgTable('verifications', {
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 });
-
-export const userProfiles = pgTable('user_profiles', {
-  id: text('id').primaryKey(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  username: text('username'),
-  firstName: text('first_name'),
-  lastName: text('last_name'),
-  country: text('country'),
-  city: text('city'),
-  state: text('state'),
-  bio: text('bio'),
-  facebookLink: text('facebook_link'),
-  instagramLink: text('instagram_link'),
-  discordLink: text('discord_link'),
-  twitterLink: text('twitter_link'),
-  threadsLink: text('threads_link'),
-  blueskyLink: text('bluesky_link'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-});
-
-// Type definitions for userProfiles
-export type UserProfile = InferSelectModel<typeof userProfiles>;
-export type NewUserProfile = InferInsertModel<typeof userProfiles>;
-
-// Type definitions for other tables
-export type User = InferSelectModel<typeof users>;
-export type NewUser = InferInsertModel<typeof users>;
-
-export type Session = InferSelectModel<typeof sessions>;
-export type NewSession = InferInsertModel<typeof sessions>;
-
-export type Account = InferSelectModel<typeof accounts>;
-export type NewAccount = InferInsertModel<typeof accounts>;
-
-export type Verification = InferSelectModel<typeof verifications>;
-export type NewVerification = InferInsertModel<typeof verifications>;
