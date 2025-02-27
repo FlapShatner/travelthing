@@ -1,7 +1,7 @@
 'use client';
 import { authClient } from '@/lib/auth-client';
 // import Image from "next/image";
-import EditProfile from '@/components/edit-profile';
+import EditProfile from '@/components/edit-profile/edit-profile';
 function Page() {
   const { data } = authClient.useSession();
   if (!data) {
