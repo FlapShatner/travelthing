@@ -12,18 +12,20 @@ import {
 } from '@/components/ui/select';
 import { useFieldArray, useFormContext, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
+import { ProfileFormData } from '@/lib/zod-schema';
 
-// Define social platform options
+const maxLinks = 8;
+
 export const SOCIAL_PLATFORMS = [
   { value: 'facebookLink', label: 'Facebook' },
   { value: 'instagramLink', label: 'Instagram' },
   { value: 'discordLink', label: 'Discord' },
-  { value: 'twitterLink', label: 'Twitter' },
+  { value: 'twitterLink', label: 'Twitter / X' },
   { value: 'threadsLink', label: 'Threads' },
   { value: 'blueskyLink', label: 'Bluesky' },
+  { value: 'otherLink', label: 'Website' },
 ];
 
-// Type for social link
 export type SocialLink = {
   id: string;
   platform: string;
@@ -31,30 +33,29 @@ export type SocialLink = {
 };
 
 export default function SocialLinks() {
-  const { control, watch } = useFormContext();
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext<ProfileFormData>();
 
-  // Use fieldArray to handle the dynamic social links
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'socialLinks',
   });
 
-  // Watch social links to get current values for filtering
   const socialLinks = watch('socialLinks');
 
-  // For debugging
   useEffect(() => {
     console.log('Current social links:', socialLinks);
   }, [socialLinks]);
 
-  // Add new social link
   const addSocialLink = () => {
-    if (fields.length < 6) {
+    if (fields.length < maxLinks) {
       append({ id: String(Date.now()), platform: '', url: '' });
     }
   };
 
-  // Get available platforms (not already selected)
   const getAvailablePlatforms = (currentIndex: number) => {
     const selectedPlatforms =
       socialLinks
@@ -74,7 +75,7 @@ export default function SocialLinks() {
       <div className="flex items-center justify-between">
         <Label>Social Links</Label>
         <span className="text-sm text-gray-500">
-          {fields.length}/6 links added
+          {fields.length}/{maxLinks} links added
         </span>
       </div>
 
@@ -83,7 +84,7 @@ export default function SocialLinks() {
           key={field.id}
           className="flex items-center gap-2"
         >
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Controller
               control={control}
               name={`socialLinks.${index}.platform`}
@@ -92,7 +93,7 @@ export default function SocialLinks() {
                   value={field.value || ''}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full mb-2">
                     <SelectValue placeholder="Select platform" />
                   </SelectTrigger>
                   <SelectContent>
@@ -108,26 +109,37 @@ export default function SocialLinks() {
                 </Select>
               )}
             />
+            {errors.socialLinks?.[index]?.platform && (
+              <p className="text-sm text-red-500 absolute top-9">
+                {errors.socialLinks[index]?.platform?.message}
+              </p>
+            )}
           </div>
-          <div className="flex-[2]">
+          <div className="flex-[2] relative">
             <Controller
               control={control}
               name={`socialLinks.${index}.url`}
               render={({ field }) => (
                 <Input
+                  className="mb-2"
                   placeholder="Enter your profile URL"
                   value={field.value || ''}
                   onChange={field.onChange}
                 />
               )}
             />
+            {errors.socialLinks?.[index]?.url && (
+              <p className="text-sm text-red-500 absolute top-9">
+                {errors.socialLinks[index]?.url?.message}
+              </p>
+            )}
           </div>
           <Button
             type="button"
             variant="outline"
             size="icon"
             onClick={() => remove(index)}
-            className="flex-shrink-0"
+            className="flex-shrink-0 mb-2"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Remove</span>
@@ -135,7 +147,11 @@ export default function SocialLinks() {
         </div>
       ))}
 
-      {fields.length < 6 && (
+      {errors.socialLinks?.message && (
+        <p className="text-sm text-red-500">{errors.socialLinks.message}</p>
+      )}
+
+      {fields.length < maxLinks && (
         <Button
           type="button"
           variant="outline"

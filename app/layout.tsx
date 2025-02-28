@@ -1,29 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
-import "./globals.css";
-import Providers from "@/components/providers";
-import Header from "@/components/header/header";
+import { Geist, Geist_Mono, DM_Sans } from 'next/font/google';
+import './globals.css';
+import Providers from '@/components/providers';
+import Header from '@/components/header/header';
+import { Toaster } from '@/components/ui/sonner';
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
+  variable: '--font-dm-sans',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Travel Thing",
-  description: "Travel Thing",
+  title: 'Travel Thing',
+  description: 'Travel Thing',
 };
-
 
 export default function RootLayout({
   children,
@@ -31,12 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${dmSans.variable} antialiased font-dm-sans h-screen`}>
+        className={`${geistSans.variable} ${geistMono.variable} ${dmSans.variable} antialiased font-dm-sans h-screen`}
+      >
         <Providers>
           <Header />
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>

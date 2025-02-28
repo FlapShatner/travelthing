@@ -1,7 +1,6 @@
 'use client';
 import { authClient } from '@/lib/auth-client';
-// import Image from "next/image";
-import EditProfile from '@/components/edit-profile/edit-profile';
+import EditProfileForm from '@/components/edit-profile/edit-profile-form';
 function Page() {
   const { data } = authClient.useSession();
   if (!data) {
@@ -14,11 +13,7 @@ function Page() {
     // redirect("/")
   }
   console.log(user);
-  return (
-    <div>
-      <EditProfile />
-    </div>
-  );
+  return <EditProfileForm />;
 }
 
 export default Page;
