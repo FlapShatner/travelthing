@@ -1,12 +1,16 @@
-import { ImageIcon, LoaderPinwheel } from 'lucide-react';
+import { useState } from 'react';
+
+import { ImageIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { Progress } from '../ui/progress';
 import Image from 'next/image';
 import { ImageData } from './edit-profile-form';
 import { useUploadThing } from '@/lib/uploadthing';
 import { toast } from 'sonner';
+import { MAX_FILE_SIZE } from '@/data/constants';
 
 function HeaderPicture({
   headerImage,
@@ -15,6 +19,7 @@ function HeaderPicture({
   headerImage: ImageData | null;
   setHeaderImage: (headerImage: ImageData | null) => void;
 }) {
+  const [progress, setProgress] = useState(0);
   const { startUpload, isUploading } = useUploadThing('headerImage', {
     onClientUploadComplete: (res) => {
       setHeaderImage({
@@ -22,6 +27,10 @@ function HeaderPicture({
         file: null,
         isUploaded: true,
       });
+    },
+    uploadProgressGranularity: 'fine',
+    onUploadProgress: (progress) => {
+      setProgress(progress);
     },
     onUploadError: () => {
       toast.error('Failed to upload header image');
@@ -33,6 +42,12 @@ function HeaderPicture({
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error('Profile picture must be smaller than 6MB');
+        // Reset the input field
+        event.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setHeaderImage({
@@ -76,18 +91,25 @@ function HeaderPicture({
         />
       </div>
       {headerImage && !headerImage.isUploaded ? (
-        <Button
-          className="absolute bottom-6 right-2"
-          size="sm"
-          onClick={handleUploadHeaderImage}
-          disabled={isUploading}
-        >
+        <div>
           {isUploading ? (
-            <LoaderPinwheel className="w-4 h-4 animate-spin" />
+            <div className="absolute bottom-6 w-full">
+              <Progress
+                value={progress}
+                className="h-4 w-[98%] mx-auto"
+              />
+            </div>
           ) : (
-            'Save'
+            <Button
+              className="absolute bottom-6 right-2"
+              size="sm"
+              onClick={handleUploadHeaderImage}
+              disabled={isUploading}
+            >
+              Save
+            </Button>
           )}
-        </Button>
+        </div>
       ) : headerImage && headerImage.isUploaded ? (
         <Badge
           className="absolute bottom-6 right-2 opacity-60"

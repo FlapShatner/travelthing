@@ -1,8 +1,11 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { getServerSession } from '@/server/auth-actions';
+import { MAX_FILE_SIZE } from '@/data/constants';
 
 const f = createUploadthing();
+
+const maxFileSize = `${MAX_FILE_SIZE / 1024 / 1024}MB`;
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
@@ -13,7 +16,7 @@ export const ourFileRouter = {
        * For full list of options and defaults, see the File Route API reference
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
-      maxFileSize: '4MB',
+      maxFileSize: maxFileSize,
       maxFileCount: 1,
     },
   })
@@ -40,7 +43,7 @@ export const ourFileRouter = {
     }),
   headerImage: f({
     image: {
-      maxFileSize: '4MB',
+      maxFileSize: maxFileSize,
       maxFileCount: 1,
     },
   })

@@ -1,4 +1,5 @@
-import { Camera, LoaderPinwheel } from 'lucide-react';
+import { useState } from 'react';
+import { Camera } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
@@ -6,6 +7,8 @@ import { Button } from '../ui/button';
 import { ImageData } from './edit-profile-form';
 import { useUploadThing } from '@/lib/uploadthing';
 import { toast } from 'sonner';
+import { MAX_FILE_SIZE } from '@/data/constants';
+import { Progress } from '../ui/progress';
 
 function ProfilePicture({
   profilePicture,
@@ -14,6 +17,7 @@ function ProfilePicture({
   profilePicture: ImageData | null;
   setProfilePicture: (profilePicture: ImageData | null) => void;
 }) {
+  const [progress, setProgress] = useState(0);
   const { startUpload, isUploading } = useUploadThing('profilePicture', {
     onClientUploadComplete: (res) => {
       setProfilePicture({
@@ -21,6 +25,10 @@ function ProfilePicture({
         file: null,
         isUploaded: true,
       });
+    },
+    uploadProgressGranularity: 'fine',
+    onUploadProgress: (progress) => {
+      setProgress(progress);
     },
     onUploadError: () => {
       toast.error('Failed to upload profile picture');
@@ -32,6 +40,12 @@ function ProfilePicture({
   ) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error('Profile picture must be smaller than 6MB');
+        event.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfilePicture({
@@ -73,18 +87,23 @@ function ProfilePicture({
           Click to upload a new profile picture
         </p>
         {profilePicture && !profilePicture.isUploaded ? (
-          <Button
-            className="mt-1"
-            size="sm"
-            onClick={handleUploadProfilePicture}
-            disabled={isUploading}
-          >
+          <div>
             {isUploading ? (
-              <LoaderPinwheel className="w-4 h-4 animate-spin" />
+              <Progress
+                value={progress}
+                className="h-4 w-[98%] mx-auto"
+              />
             ) : (
-              'Save'
+              <Button
+                className="mt-1"
+                size="sm"
+                onClick={handleUploadProfilePicture}
+                disabled={isUploading}
+              >
+                Save
+              </Button>
             )}
-          </Button>
+          </div>
         ) : profilePicture && profilePicture.isUploaded ? (
           <Badge
             className="mt-1 opacity-60"
