@@ -5,12 +5,10 @@ function Page() {
   const { data } = authClient.useSession();
   if (!data) {
     console.log('No session');
-    // redirect("/")
   }
   const user = data?.user;
   if (!user) {
     console.log('No user');
-    // redirect("/")
   }
   console.log(user);
   return <EditProfileForm />;

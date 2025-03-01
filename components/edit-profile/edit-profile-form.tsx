@@ -18,6 +18,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileFormSchema, ProfileFormData } from '@/lib/zod-schema';
 import { toast } from 'sonner';
+// import { authClient } from '@/lib/auth-client';
 
 export type ImageData = {
   fileUrl: string;
@@ -28,6 +29,8 @@ export type ImageData = {
 function EditProfileForm() {
   const [profilePicture, setProfilePicture] = useState<ImageData | null>(null);
   const [headerImage, setHeaderImage] = useState<ImageData | null>(null);
+
+  // const { data } = authClient.useSession();
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),

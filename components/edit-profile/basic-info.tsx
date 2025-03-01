@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useFormContext } from 'react-hook-form';
 import { ProfileFormData } from '@/lib/zod-schema';
+import { authClient } from '@/lib/auth-client';
 
 export function BasicInfo() {
   const {
@@ -10,8 +11,19 @@ export function BasicInfo() {
     formState: { errors },
   } = useFormContext<ProfileFormData>();
 
+  const { data } = authClient.useSession();
+  const user = data?.user;
+
   return (
     <>
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          value={user?.email}
+          disabled
+        />
+      </div>
       <div className="grid gap-2">
         <Label htmlFor="username">Username</Label>
         <Input
