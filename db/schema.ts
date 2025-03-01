@@ -64,6 +64,8 @@ export const userProfiles = pgTable('user_profiles', {
   city: text('city'),
   state: text('state'),
   bio: text('bio'),
+  profilePicture: text('profile_picture'),
+  headerImage: text('header_image'),
   facebookLink: text('facebook_link'),
   instagramLink: text('instagram_link'),
   discordLink: text('discord_link'),

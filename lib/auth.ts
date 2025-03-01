@@ -4,7 +4,6 @@ import db from '../db';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import * as schema from '../db/schema';
 import { env } from '@/utils/env';
-
 export const auth = betterAuth({
   socialProviders: {
     google: {
@@ -27,6 +26,7 @@ export const auth = betterAuth({
         type: 'boolean',
         required: true,
         defaultValue: false,
+        input: true,
       },
     },
   },

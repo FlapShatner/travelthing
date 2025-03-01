@@ -13,6 +13,8 @@ import {
 import { useFieldArray, useFormContext, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
 import { ProfileFormData } from '@/lib/zod-schema';
+import { UserProfile } from '@/db/schema';
+import { ActionResponse } from '@/data/types';
 
 const maxLinks = 8;
 
@@ -32,23 +34,50 @@ export type SocialLink = {
   url: string;
 };
 
-export default function SocialLinks() {
+export default function SocialLinks({
+  profile,
+}: {
+  profile: ActionResponse<UserProfile> | null;
+}) {
   const {
     control,
     watch,
     formState: { errors },
   } = useFormContext<ProfileFormData>();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'socialLinks',
   });
 
-  const socialLinks = watch('socialLinks');
-
+  // Initialize form with profile social links if available
   useEffect(() => {
-    console.log('Current social links:', socialLinks);
-  }, [socialLinks]);
+    if (profile?.data) {
+      // Map individual social link properties to the format expected by the form
+      const socialLinksFromProfile: SocialLink[] = [];
+
+      // Check each social platform and add it if it exists in the profile
+      SOCIAL_PLATFORMS.forEach((platform) => {
+        const linkKey = platform.value as keyof UserProfile;
+        const linkValue = profile.data?.[linkKey] as string | null;
+
+        if (linkValue) {
+          socialLinksFromProfile.push({
+            id: String(Date.now() + Math.random()), // Ensure unique IDs
+            platform: platform.value,
+            url: linkValue,
+          });
+        }
+      });
+
+      // Only replace if we found any social links
+      if (socialLinksFromProfile.length > 0) {
+        replace(socialLinksFromProfile);
+      }
+    }
+  }, [profile, replace]);
+
+  const socialLinks = watch('socialLinks');
 
   const addSocialLink = () => {
     if (fields.length < maxLinks) {

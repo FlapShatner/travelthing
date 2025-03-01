@@ -17,20 +17,30 @@ import BasicInfo from './basic-info';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileFormSchema, ProfileFormData } from '@/lib/zod-schema';
+import {
+  createUserProfile,
+  updateUserProfile,
+} from '@/app/actions/profile-actions';
+import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
-// import { authClient } from '@/lib/auth-client';
-
+import { UserProfile } from '@/db/schema';
+import { v4 as uuidv4 } from 'uuid';
+import { ActionResponse } from '@/data/types';
 export type ImageData = {
   fileUrl: string;
   file: File | null;
   isUploaded: boolean;
 };
 
-function EditProfileForm() {
+function EditProfileForm({
+  profile,
+}: {
+  profile: ActionResponse<UserProfile> | null;
+}) {
   const [profilePicture, setProfilePicture] = useState<ImageData | null>(null);
   const [headerImage, setHeaderImage] = useState<ImageData | null>(null);
-
-  // const { data } = authClient.useSession();
+  const { data } = authClient.useSession();
+  const userId = data?.user.id;
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileFormSchema),
@@ -50,6 +60,20 @@ function EditProfileForm() {
   const { handleSubmit, formState } = methods;
   const { isSubmitting } = formState;
 
+  if (!userId) {
+    return <div>Loading...</div>;
+  }
+
+  if (profile && profile.data) {
+    methods.setValue('username', profile.data.username ?? '');
+    methods.setValue('firstName', profile.data.firstName ?? '');
+    methods.setValue('lastName', profile.data.lastName ?? '');
+    methods.setValue('country', profile.data.country ?? '');
+    methods.setValue('city', profile.data.city ?? '');
+    methods.setValue('state', profile.data.state ?? '');
+    methods.setValue('bio', profile.data.bio ?? '');
+  }
+
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const socialLinksData = data.socialLinks.reduce((acc, link) => {
@@ -61,18 +85,51 @@ function EditProfileForm() {
 
       const profileData = {
         ...data,
-        profilePicture,
-        headerImage,
+        id: profile?.data ? profile.data.id : uuidv4(),
+        userId: userId,
+        profilePicture: profilePicture?.fileUrl || null,
+        headerImage: headerImage?.fileUrl || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        username: data.username || null,
+        firstName: data.firstName || null,
+        lastName: data.lastName || null,
+        bio: data.bio || null,
+        country: data.country || null,
+        city: data.city || null,
+        state: data.state || null,
+        facebookLink: null,
+        instagramLink: null,
+        discordLink: null,
+        twitterLink: null,
+        youtubeLink: null,
+        blueskyLink: null,
         ...socialLinksData,
+      } as unknown as UserProfile;
+
+      const createOrUpdateProfile = async () => {
+        if (profile?.data) {
+          const response = await updateUserProfile(profileData);
+          return response;
+        } else {
+          const response = await createUserProfile(profileData);
+          return response;
+        }
       };
 
-      console.log('Profile data to submit:', profileData);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success('Profile updated', {
-        description: 'Your profile has been successfully updated.',
+      const response = await createOrUpdateProfile();
+      const updatedUser = await authClient.updateUser({
+        hasProfile: true,
       });
+      if (response.success && !updatedUser.error) {
+        toast.success('Profile updated', {
+          description: 'Your profile has been successfully updated.',
+        });
+      } else {
+        toast.error('Error', {
+          description: 'There was a problem updating your profile.',
+        });
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       toast.error('Error', {
@@ -103,7 +160,7 @@ function EditProfileForm() {
                 <div className="grid gap-4">
                   <BasicInfo />
                   <Location />
-                  <SocialLinks />
+                  <SocialLinks profile={profile} />
                 </div>
               </div>
               <div className="mt-6">
