@@ -89,7 +89,7 @@ function HeaderPicture({
 
   return (
     <div className="space-y-4 relative">
-      <Label>Header Image</Label>
+      <Label>Background</Label>
       <div className="relative aspect-[3/1] overflow-hidden rounded-lg border border-input">
         {headerImage ? (
           <Image

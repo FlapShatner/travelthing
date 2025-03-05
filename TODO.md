@@ -14,7 +14,6 @@ https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#prefe
 
 ## NEXT
 
-- add photo crop / preview for header and profile images
 - autocomplete state / city fields as user types
 - list countries in location section of profile edit form
 
@@ -28,6 +27,7 @@ https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr#prefe
 ### Upload profile and header images
 - User select, crop, preview image from file input
 - Upload file to UT, attach url to user data object in DB
+- add photo crop / preview for header and profile images
 
 ### Profile
 
