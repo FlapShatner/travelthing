@@ -13,11 +13,14 @@ export const userProfile = {
     const user = await db.insert(userProfiles).values(userProfile).returning();
     return user[0];
   },
-  updateUserProfile: async (userProfile: UserProfile): Promise<UserProfile> => {
+  updateUserProfile: async (
+    userProfile: UserProfile,
+    userId: string
+  ): Promise<UserProfile> => {
     const user = await db
       .update(userProfiles)
       .set(userProfile)
-      .where(eq(userProfiles.userId, userProfile.userId))
+      .where(eq(userProfiles.userId, userId))
       .returning();
     return user[0];
   },

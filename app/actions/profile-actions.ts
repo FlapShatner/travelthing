@@ -79,7 +79,8 @@ export const createUserProfile = async (
 };
 
 export const updateUserProfile = async (
-  userData: UserProfile
+  userData: UserProfile,
+  userId: string
 ): Promise<ActionResponse<UserProfile>> => {
   try {
     const isValidUser = await validateUser(userData.userId);
@@ -91,7 +92,7 @@ export const updateUserProfile = async (
       };
     }
 
-    const user = await userProfile.updateUserProfile(userData);
+    const user = await userProfile.updateUserProfile(userData, userId);
     return {
       data: user,
       error: null,

@@ -109,7 +109,7 @@ function EditProfileForm({
 
       const createOrUpdateProfile = async () => {
         if (profile?.data) {
-          const response = await updateUserProfile(profileData);
+          const response = await updateUserProfile(profileData, userId);
           return response;
         } else {
           const response = await createUserProfile(profileData);
@@ -121,6 +121,7 @@ function EditProfileForm({
       const updatedUser = await authClient.updateUser({
         hasProfile: true,
       });
+
       if (response.success && !updatedUser.error) {
         toast.success('Profile updated', {
           description: 'Your profile has been successfully updated.',
