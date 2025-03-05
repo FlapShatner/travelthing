@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, PencilIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ImageData } from './edit-profile-form';
+import CropDialog from './crop-dialog';
 import { useUploadThing } from '@/lib/uploadthing';
 import { toast } from 'sonner';
 import { MAX_FILE_SIZE } from '@/data/constants';
 import { Progress } from '../ui/progress';
 import { authClient } from '@/lib/auth-client';
-import { updateUserProfileImage } from '@/app/actions/profile-actions';
+import { updateUserProfileImage } from '@/server/profile-actions';
 function ProfilePicture({
   profilePicture,
   setProfilePicture,
@@ -19,6 +20,7 @@ function ProfilePicture({
   setProfilePicture: (profilePicture: ImageData | null) => void;
 }) {
   const [progress, setProgress] = useState(0);
+  const [open, setOpen] = useState(false);
   const { data } = authClient.useSession();
   const userId = data?.user.id;
   const { startUpload, isUploading } = useUploadThing('profilePicture', {
@@ -59,6 +61,7 @@ function ProfilePicture({
           file,
           isUploaded: false,
         });
+        setOpen(true);
       };
       reader.readAsDataURL(file);
     }
@@ -69,9 +72,18 @@ function ProfilePicture({
       await startUpload([profilePicture.file]);
     }
   };
+
+  const handleCropComplete = (croppedImage: File) => {
+    setProfilePicture({
+      fileUrl: URL.createObjectURL(croppedImage),
+      file: croppedImage,
+      isUploaded: false,
+    });
+  };
+
   return (
     <div className="flex relative items-center space-x-4 w-max">
-      <div className="relative">
+      <div className="relative pr-2">
         <Avatar className="w-24 h-24">
           <AvatarImage src={profilePicture?.fileUrl || ''} />
           <AvatarFallback>
@@ -80,6 +92,11 @@ function ProfilePicture({
             )}
           </AvatarFallback>
         </Avatar>
+        {profilePicture && profilePicture.isUploaded ? (
+          <Badge className="mt-1 opacity-60 px-1 py-1 rounded-sm absolute bottom-0 right-0">
+            <PencilIcon className="w-6 h-6" />
+          </Badge>
+        ) : null}
         <Input
           type="file"
           accept="image/*"
@@ -110,14 +127,14 @@ function ProfilePicture({
               </Button>
             )}
           </div>
-        ) : profilePicture && profilePicture.isUploaded ? (
-          <Badge
-            className="mt-1 opacity-60"
-            variant="default"
-          >
-            Saved
-          </Badge>
         ) : null}
+        <CropDialog
+          image={profilePicture}
+          open={open}
+          aspectRatio={1 / 1}
+          onOpenChange={setOpen}
+          onCropComplete={handleCropComplete}
+        />
       </div>
     </div>
   );

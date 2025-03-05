@@ -17,10 +17,7 @@ import BasicInfo from './basic-info';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileFormSchema, ProfileFormData } from '@/lib/zod-schema';
-import {
-  createUserProfile,
-  updateUserProfile,
-} from '@/app/actions/profile-actions';
+import { createUserProfile, updateUserProfile } from '@/server/profile-actions';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { UserProfile } from '@/db/schema';
