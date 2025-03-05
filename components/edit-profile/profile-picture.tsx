@@ -9,7 +9,8 @@ import { useUploadThing } from '@/lib/uploadthing';
 import { toast } from 'sonner';
 import { MAX_FILE_SIZE } from '@/data/constants';
 import { Progress } from '../ui/progress';
-
+import { authClient } from '@/lib/auth-client';
+import { updateUserProfileImage } from '@/app/actions/profile-actions';
 function ProfilePicture({
   profilePicture,
   setProfilePicture,
@@ -18,6 +19,8 @@ function ProfilePicture({
   setProfilePicture: (profilePicture: ImageData | null) => void;
 }) {
   const [progress, setProgress] = useState(0);
+  const { data } = authClient.useSession();
+  const userId = data?.user.id;
   const { startUpload, isUploading } = useUploadThing('profilePicture', {
     onClientUploadComplete: (res) => {
       setProfilePicture({
@@ -25,6 +28,9 @@ function ProfilePicture({
         file: null,
         isUploaded: true,
       });
+      if (userId) {
+        updateUserProfileImage(userId, 'profilePicture', res?.[0].ufsUrl);
+      }
     },
     uploadProgressGranularity: 'fine',
     onUploadProgress: (progress) => {

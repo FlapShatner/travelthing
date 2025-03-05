@@ -24,6 +24,16 @@ export const userProfile = {
       .returning();
     return user[0];
   },
+  updateUserProfileImage: async (
+    userId: string,
+    imageType: 'headerImage' | 'profilePicture',
+    imageUrl: string
+  ): Promise<void> => {
+    await db
+      .update(userProfiles)
+      .set({ [imageType]: imageUrl })
+      .where(eq(userProfiles.userId, userId));
+  },
   deleteUserProfile: async (userId: string): Promise<void> => {
     await db.delete(userProfiles).where(eq(userProfiles.userId, userId));
   },

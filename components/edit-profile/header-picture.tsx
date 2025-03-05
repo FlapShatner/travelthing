@@ -11,7 +11,8 @@ import { ImageData } from './edit-profile-form';
 import { useUploadThing } from '@/lib/uploadthing';
 import { toast } from 'sonner';
 import { MAX_FILE_SIZE } from '@/data/constants';
-
+import { authClient } from '@/lib/auth-client';
+import { updateUserProfileImage } from '@/app/actions/profile-actions';
 function HeaderPicture({
   headerImage,
   setHeaderImage,
@@ -20,6 +21,10 @@ function HeaderPicture({
   setHeaderImage: (headerImage: ImageData | null) => void;
 }) {
   const [progress, setProgress] = useState(0);
+
+  const { data } = authClient.useSession();
+  const userId = data?.user.id;
+
   const { startUpload, isUploading } = useUploadThing('headerImage', {
     onClientUploadComplete: (res) => {
       setHeaderImage({
@@ -27,6 +32,9 @@ function HeaderPicture({
         file: null,
         isUploaded: true,
       });
+      if (userId) {
+        updateUserProfileImage(userId, 'headerImage', res?.[0].ufsUrl);
+      }
     },
     uploadProgressGranularity: 'fine',
     onUploadProgress: (progress) => {

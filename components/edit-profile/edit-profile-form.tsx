@@ -37,8 +37,18 @@ function EditProfileForm({
 }: {
   profile: ActionResponse<UserProfile> | null;
 }) {
-  const [profilePicture, setProfilePicture] = useState<ImageData | null>(null);
-  const [headerImage, setHeaderImage] = useState<ImageData | null>(null);
+  const [profilePicture, setProfilePicture] = useState<ImageData | null>({
+    fileUrl: profile?.data?.profilePicture ?? '',
+    file: null,
+    isUploaded: true,
+  });
+
+  const [headerImage, setHeaderImage] = useState<ImageData | null>({
+    fileUrl: profile?.data?.headerImage ?? '',
+    file: null,
+    isUploaded: true,
+  });
+
   const { data } = authClient.useSession();
   const userId = data?.user.id;
 
@@ -89,7 +99,7 @@ function EditProfileForm({
         userId: userId,
         profilePicture: profilePicture?.fileUrl || null,
         headerImage: headerImage?.fileUrl || null,
-        createdAt: new Date(),
+        createdAt: profile?.data?.createdAt || new Date(),
         updatedAt: new Date(),
         username: data.username || null,
         firstName: data.firstName || null,

@@ -108,6 +108,36 @@ export const updateUserProfile = async (
   }
 };
 
+export const updateUserProfileImage = async (
+  userId: string,
+  imageType: 'headerImage' | 'profilePicture',
+  imageUrl: string
+): Promise<ActionResponse<void>> => {
+  try {
+    const isValidUser = await validateUser(userId);
+    if (!isValidUser) {
+      return {
+        data: null,
+        error: 'Unauthorized access',
+        success: false,
+      };
+    }
+    await userProfile.updateUserProfileImage(userId, imageType, imageUrl);
+    return {
+      data: null,
+      error: null,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Error updating user profile image:', error);
+    return {
+      data: null,
+      error: 'Failed to update user profile image',
+      success: false,
+    };
+  }
+};
+
 export const deleteUserProfile = async (
   userId: string
 ): Promise<ActionResponse<void>> => {
