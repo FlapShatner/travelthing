@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ReactCrop, {
   centerCrop,
   makeAspectCrop,
+  convertToPixelCrop,
+  PixelCrop,
   type Crop,
 } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -34,21 +36,17 @@ function CropDialog({
   const imageRef = useRef<HTMLImageElement>(null);
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-    const { naturalWidth: width, naturalHeight: height } = e.currentTarget;
+    const { width, height } = e.currentTarget;
     const crop = centerCrop(
-      makeAspectCrop(
-        { unit: '%', width: 100, height: 100 },
-        aspectRatio,
-        width,
-        height
-      ),
+      makeAspectCrop({ unit: '%', width: 100 }, aspectRatio, width, height),
       width,
       height
     );
-    setCrop(crop);
+    setCrop(convertToPixelCrop(crop, width, height));
   }
 
-  const handleChange = (newCrop: Crop) => {
+  const handleChange = (crop: PixelCrop) => {
+    const newCrop = crop;
     setCrop(newCrop);
   };
 
@@ -95,6 +93,12 @@ function CropDialog({
     onCropComplete(croppedFile);
     onOpenChange(false);
   };
+
+  useEffect(() => {
+    console.log(crop);
+    console.log('width', imageRef.current?.width);
+    console.log('height', imageRef.current?.height);
+  }, [crop, imageRef.current]);
 
   return (
     <Dialog

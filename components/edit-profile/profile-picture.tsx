@@ -131,7 +131,7 @@ function ProfilePicture({
         <CropDialog
           image={profilePicture}
           open={open}
-          aspectRatio={1 / 1}
+          aspectRatio={1}
           onOpenChange={setOpen}
           onCropComplete={handleCropComplete}
         />

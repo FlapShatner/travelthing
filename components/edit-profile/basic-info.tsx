@@ -17,7 +17,12 @@ export function BasicInfo() {
   return (
     <>
       <div className="grid gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">
+          Email{' '}
+          <span className="text-xs ml-4 opacity-75">
+            * Not visible to other users
+          </span>
+        </Label>
         <Input
           id="email"
           value={user?.email}
